@@ -1,0 +1,27 @@
+name: Deploy React js Application to hostinger
+
+
+on: 
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    stpes: 
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: eploy Via SSh 
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.SSH_HOST}}
+          # host:31.97.206.6
+          username: root 
+          key: ${{secrets.SSH_KEY}}
+          scrip: |
+            cd/root/reactjs-application-deploy-github-actions
+            git pull
+            docker compose up -d --build
