@@ -1,17 +1,37 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTodo } from "../../app/features/todo/todoSlice";
+import { addTodo, updateTodo } from "../../app/features/todo/todoSlice";
 
-function AddTodo() {
+function AddTodo({ editTodo, setEditTodo }) {
     const [input, setInput] = useState("");
+
     const dispatch = useDispatch();
+
+    // Load selected todo into input
+    React.useEffect(() => {
+        if (editTodo) {
+            setInput(editTodo.text);
+        }
+    }, [editTodo]);
 
     const addTodoHandler = (e) => {
         e.preventDefault();
-
         if (!input.trim()) return;
 
-        dispatch(addTodo(input));
+        // UPDATE
+        if (editTodo) {
+            dispatch(
+                updateTodo({
+                    id: editTodo.id,
+                    text: input,
+                })
+            );
+            setEditTodo(null);
+        }
+        // ADD
+        else {
+            dispatch(addTodo(input));
+        }
         setInput("");
     };
 
@@ -21,13 +41,12 @@ function AddTodo() {
                 <input
                     type="text"
                     placeholder="Enter a todo..."
-                    value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className=""
+                    value={input}
+                    className="todo-input"
                 />
-
                 <button type="submit" className="todo-button">
-                    Add Todo
+                    {editTodo ? "Update Todo" : "Add Todo"}
                 </button>
             </form>
         </div>
